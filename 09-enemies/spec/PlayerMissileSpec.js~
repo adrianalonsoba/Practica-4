@@ -82,12 +82,10 @@ describe("Clase PlayerMissile", function(){
       expect(SpriteSheet.draw).toHaveBeenCalledWith(ctx,'missile',0,-9);
     }); 
 //COMENTO FIREHOLD DE MOMENTO
-/*
     it("firehold", function(){
       Game.keys = { 32 :'fire'};
       var ps= new PlayerShip();
       ps.step(0.5);
       expect(ps.firehold).toEqual(false);
     }); 
-*/
 });
