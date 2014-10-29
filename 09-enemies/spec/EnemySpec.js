@@ -115,7 +115,7 @@ describe("Clase Enemy", function(){
      // gb.add(en);
 			spyOn(SpriteSheet,"draw");
 			en.draw(ctx);
-			expect(SpriteSheet.draw).toHaveBeenCalled();
+			expect(SpriteSheet.draw).toHaveBeenCalledWith(ctx,'enemy_purple',100,-50);
    
     });
     
