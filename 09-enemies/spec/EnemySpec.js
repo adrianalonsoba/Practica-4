@@ -103,7 +103,7 @@ describe("Clase Enemy", function(){
       var gb = new GameBoard();
       var en = new Enemy(enemies.basic);
       gb.add(en);
-      spyOn(gb,"remove")
+      spyOn(gb,"remove");
       en.step(200);
       expect(gb.remove).toHaveBeenCalled();
    
