@@ -211,7 +211,7 @@ var FireBall = function(x,y,direccion) {
 
 // Heredamos del prototipo new Sprite()
 FireBall.prototype = new Sprite();
-FireBall.prototype.type = OBJECT_PLAYER_PROJECTILE;
+FireBall.prototype.type = OBJECT_POWERUP;
 
 FireBall.prototype.step = function(dt)  {
     this.x += dt * this.vx;
