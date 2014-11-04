@@ -5,6 +5,7 @@ var sprites = {
     enemy_bee: { sx: 79, sy: 0, w: 37, h: 43, frames: 1 },
     enemy_ship: { sx: 116, sy: 0, w: 42, h: 43, frames: 1 },
     enemy_circle: { sx: 158, sy: 0, w: 32, h: 33, frames: 1 },
+    fireball: { sx: 0, sy: 64, w: 64, h: 64, frames: 1 },
     explosion: { sx: 0, sy: 64, w: 64, h: 64, frames: 12 }
 };
 
@@ -213,6 +214,22 @@ var PlayerShip = function() {
 	    this.board.add(new PlayerMissile(this.x,this.y+this.h/2));
 	    this.board.add(new PlayerMissile(this.x+this.w,this.y+this.h/2));
 	}
+    if(Game.keys['fbRight'] && this.reload < 0) {
+        // Esta pulsada la tecla de fireball derecho y ya ha pasado el tiempo reload
+        Game.keys['fbRight'] = false;
+        this.reload = this.reloadTime;
+
+        this.board.add(new FireBall(this.x+this.w,this.y+this.h,"left"));
+    }
+    if(Game.keys['fbLeft'] && this.reload < 0) {
+        // Esta pulsada la tecla de fireball derecho y ya ha pasado el tiempo reload
+        Game.keys['fbLeft'] = false;
+        this.reload = this.reloadTime;
+
+        this.board.add(new FireBall(this.x+this.w,this.y+this.h,"right"));
+    }
+
+
     };
 };
 
@@ -251,6 +268,34 @@ PlayerMissile.prototype.step = function(dt)  {
 	this.board.remove(this); 
     }
 };
+
+var FireBall = function(x,y,direccion) {
+    this.setup('fireball',{vx:-200,vy:-2000,direccion:direccion,damage:"infinity"});
+    this.x = x - this.w/2; 
+    this.y = y - this.h; 
+
+    if (direccion == "right"){
+        this.vx = -this.vx;
+    }
+};
+
+// Heredamos del prototipo new Sprite()
+FireBall.prototype = new Sprite();
+FireBall.prototype.type = OBJECT_POWERUP;
+
+FireBall.prototype.step = function(dt)  {
+    this.x += dt * this.vx;
+    this.y += dt * this.vy;
+
+    this.vy =this.vy+200;
+
+    var collision = this.board.collide(this,OBJECT_ENEMY);
+    if(collision) {
+        collision.hit(this.damage);
+    } 
+    if(this.y > 500) { this.board.remove(this);}
+};
+
 
 
 // Constructor para las naves enemigas. Un enemigo se define mediante
@@ -339,11 +384,17 @@ Enemy.prototype.step = function(dt) {
 };
 
 Enemy.prototype.hit = function(damage) {
-    this.health -= damage;
-    if(this.health <= 0) {
-	this.board.add(new Explosion(this.x + this.w/2, 
+    if(damage==='infinity'){
+        this.board.add(new Explosion(this.x + this.w/2, 
                                      this.y + this.h/2));
-	this.board.remove(this);
+        this.board.remove(this);
+    }else{
+        this.health -= damage;
+        if(this.health <= 0) {
+        this.board.add(new Explosion(this.x + this.w/2, 
+                                         this.y + this.h/2));
+        this.board.remove(this);
+        }
     }
 }
 
