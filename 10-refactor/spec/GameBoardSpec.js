@@ -56,3 +56,119 @@
     colisionado con objetos de cierto tipo, no con todos los objetos.
 
 */
+
+describe("Clase GameBoard", function(){
+
+    var canvas, ctx;
+
+  beforeEach(function(){
+  // Hemos enlazado en jasmine/spec/javascript/fixtures el fichero index.html
+  loadFixtures('index.html');
+
+  canvas = $('#game')[0];
+  expect(canvas).toExist();
+
+  ctx = canvas.getContext('2d');
+  expect(ctx).toBeDefined();
+
+  oldGame = Game;
+  Game = {width: 320, height: 480};
+
+    });
+
+    afterEach(function(){
+  Game = oldGame;
+    });
+
+    it("add:Añade obj a objects", function(){
+      var gb = new GameBoard();
+      var foo="test";
+      gb.add(foo);
+
+      expect(gb.objects[0]).toEqual("test");
+    });
+
+    it("resetRemoved:Inicializar la lista de objetos pendientes de ser borrados", function(){
+      var gb = new GameBoard();
+      gb.resetRemoved();
+      expect(gb.removed).toBeDefined();
+    });
+
+    it("remove:añade a la lista de objetos marcados", function(){
+      var gb = new GameBoard();
+      gb.resetRemoved();
+
+      var foo="test";
+      gb.remove(foo);
+      expect(gb.removed[0]).toBeDefined();
+    });
+
+    it("finalizeRemoved:borra definitivamente", function(){
+      var gb = new GameBoard();
+      gb.resetRemoved();
+
+      var foo="test";
+      gb.add(foo);
+      gb.remove(foo);
+      expect(gb.objects[0]).toEqual("test");
+      gb.finalizeRemoved();
+      expect(gb.objects[0]).not.toEqual("test");
+    });    
+
+    it("iterate:aplica funcName a todos los objects", function(){
+      var gb = new GameBoard();
+      var dum= new function(){
+        this.func= function(){return true};
+      };
+      spyOn(dum,"func");
+      gb.add(dum);
+      gb.iterate('func');
+
+      expect(dum.func).toHaveBeenCalled();
+
+    }); 
+
+
+    it("detect:devuelve el primer true", function(){
+      var gb = new GameBoard();
+      var dum ="test";
+      var dum2="test2";  
+      gb.add(dum);
+      gb.add(dum2);
+      var dumf= function (){
+        return true;
+      }; 
+      expect(gb.detect(dumf)).toBe("test");
+    }); 
+
+    it("step:aplica el step", function(){
+      var gb = new GameBoard();
+      var dum ="test";
+      var dum2="test2";  
+
+      gb.add(dum);
+      gb.add(dum2);
+      spyOn(gb,"resetRemoved");
+      spyOn(gb,"iterate");
+      spyOn(gb,"finalizeRemoved");
+
+      gb.step(1);
+
+      expect(gb.resetRemoved).toHaveBeenCalled();
+      expect(gb.iterate).toHaveBeenCalledWith('step',1);
+      expect(gb.finalizeRemoved).toHaveBeenCalled();
+
+    });
+
+    it("draw: dibuja llamando a iterate", function(){
+      var gb = new GameBoard();
+      spyOn(gb,"iterate")
+      gb.draw(ctx);
+
+      expect(gb.iterate).toHaveBeenCalledWith("draw",ctx);
+
+    }); 
+
+
+
+});

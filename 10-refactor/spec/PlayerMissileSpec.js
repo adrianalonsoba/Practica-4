@@ -27,3 +27,67 @@
     la clase en el prototipo
 
 */
+
+describe("Clase PlayerMissile", function(){
+
+    var canvas, ctx;
+
+  beforeEach(function(){
+  // Hemos enlazado en jasmine/spec/javascript/fixtures el fichero index.html
+  loadFixtures('index.html');
+
+  canvas = $('#game')[0];
+  expect(canvas).toExist();
+
+  ctx = canvas.getContext('2d');
+  expect(ctx).toBeDefined();
+
+  oldGame = Game;
+  Game = {width: 320, height: 480};
+
+    });
+
+    afterEach(function(){
+  Game = oldGame;
+    });
+
+  SpriteSheet.map = {
+    ship: { sx: 0, sy: 0, w: 37, h: 42, frames: 1 },
+    missile: { sx: 0, sy: 30, w: 2, h: 10, frames: 1 }
+  };
+
+    it("Constructor",function(){
+      var pm = new PlayerMissile(1,1);
+      expect(pm.w).toBe(2);
+      expect(pm.h).toBe(10);
+      expect(pm.x).toBe(0);
+      expect(pm.y).toBe(-9);
+      expect(pm.vy).toBe(-700);
+    });
+
+    it("step", function(){
+      var pm = new PlayerMissile(1,1);
+      var board = {remove : function(){return true}};
+      pm.board = board;
+      pm.step(1);
+      expect(pm.y).toEqual(-709);
+    }); 
+
+    it("draw", function(){
+      var pm = new PlayerMissile(1,1);
+      var board = {remove : function(){return true}};
+      pm.board = board;
+      spyOn(SpriteSheet,"draw");
+      pm.draw(ctx);
+      expect(SpriteSheet.draw).toHaveBeenCalledWith(ctx,'missile',0,-9);
+    }); 
+//COMENTO FIREHOLD DE MOMENTO
+/*
+    it("firehold", function(){
+      Game.keys = { 32 :'fire'};
+      var ps= new PlayerShip();
+      ps.step(0.5);
+      expect(ps.firehold).toEqual(false);
+    }); 
+*/
+});
