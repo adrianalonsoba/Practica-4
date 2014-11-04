@@ -109,7 +109,7 @@ var SpriteSheet = new function() {
     //  como la explosion
     this.draw = function(ctx,sprite,x,y,frame) {
 	var s = this.map[sprite];
-    if (sprite=="explosion"){
+    if (sprite=="fireball"){
         w = s.w/2;
         h = s.h/2;
     }else{
