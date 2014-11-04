@@ -32,7 +32,7 @@ var Game = new function() {
     };
 
     // Gestión de la entrada (teclas para izda/derecha y disparo)
-    var KEY_CODES = { 37:'left', 39:'right', 32 :'fire' };
+    var KEY_CODES = { 37:'left', 39:'right', 32 :'fire',66: 'fbRight',78: 'fbLeft'};
     this.keys = {};
 
     this.setupInput = function() {
@@ -110,13 +110,20 @@ var SpriteSheet = new function() {
     //  como la explosion
     this.draw = function(ctx,sprite,x,y,frame) {
 	var s = this.map[sprite];
-	if(!frame) frame = 0;
-	ctx.drawImage(this.image,
+    if (sprite=="explosion"){
+        w = s.w/2;
+        h = s.h/2;
+    }else{
+        w=s.w;
+        h=s.h;
+    }
+    if(!frame) frame = 0;
+    ctx.drawImage(this.image,
                       s.sx + frame * s.w, 
                       s.sy, 
                       s.w, s.h, 
                       Math.floor(x), Math.floor(y),
-                      s.w, s.h);
+                      w, h);
     };
 }
 
